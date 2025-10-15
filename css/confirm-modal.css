@@ -1,0 +1,133 @@
+/* Confirmation Modal Styles */
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #8b5cf6;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --dark: #1e293b;
+    --light: #f8fafc;
+    --border: #e2e8f0;
+    --text: #334155;
+    --text-light: #64748b;
+}
+
+.confirmation-modal .modal-content {
+    max-width: 450px;
+    text-align: center;
+    padding: 2rem;
+}
+
+.confirmation-content {
+    animation: modalBounce 0.4s ease-out;
+}
+
+@keyframes modalBounce {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-50px);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.confirmation-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    animation: iconPulse 0.5s ease-out;
+}
+
+@keyframes iconPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.confirmation-icon.warning {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+}
+
+.confirmation-icon.danger {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+}
+
+.confirmation-icon.info {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+}
+
+.confirmation-icon.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.confirmation-modal h3 {
+    margin: 0 0 1rem;
+    color: var(--dark);
+    font-size: 1.5rem;
+}
+
+.confirmation-modal p {
+    margin: 0 0 2rem;
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.confirmation-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.confirmation-actions .btn {
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.confirmation-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.confirmation-actions .btn:active {
+    transform: translateY(0);
+}
+
+.btn-danger {
+    background: var(--primary);
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    background: var(--light);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}

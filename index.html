@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataForge AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dataset.css">
+    <link rel="stylesheet" href="css/confirm-modal.css">
+    <link rel="stylesheet" href="css/cleaning.css">
+    <link rel="stylesheet" href="css/analyzer.css">
+</head>
+<body>
+    <!-- Corner decorations -->
+    <div class="corner-decoration top-left"></div>
+    <div class="corner-decoration top-right"></div>
+    <div class="corner-decoration bottom-left"></div>
+    <div class="corner-decoration bottom-right"></div>
+    
+    <!-- Header -->
+    <div class="header">
+        <a href="/index.html" class="back-link" title="Back to DevPlay Hub">
+            <i class="fas fa-home bounce-icon"></i>
+        </a>
+        <div class="header-content">
+            <h1><i class="fas fa-brain me-2"></i>DataForge AI<i class="fas fa-wand-magic-sparkles ms-2"></i></h1>
+            <p class="header-tagline">Transform messy content into AI-ready training data</p>
+        </div>
+        <div class="floating-elements">
+            <i class="fas fa-sparkles floating-element"></i>
+            <i class="fas fa-broom floating-element"></i>
+            <i class="fas fa-robot floating-element"></i>
+        </div>
+    </div>
+    
+    <div class="fun-divider">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
+        </svg>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Tools Tabs -->
+        <div class="tools-tabs">
+            <button class="tab-btn active" data-tab="transform">
+                <i class="fas fa-exchange-alt"></i> Transform Content
+            </button>
+            <button class="tab-btn" data-tab="augment">
+                <i class="fas fa-copy"></i> Augment Data
+            </button>
+            <button class="tab-btn" data-tab="clean">
+                <i class="fas fa-broom"></i> Clean & Validate
+            </button>
+            <button class="tab-btn" data-tab="analyze">
+                <i class="fas fa-chart-bar"></i> Analyze Dataset
+            </button>
+        </div>
+
+        <!-- Transform Tab -->
+        <div class="tab-content active" id="transform-tab">
+            <div class="tool-card">
+                <h3><i class="fas fa-file-import"></i> Content to Training Data</h3>
+                <p>Paste any content (FAQs, docs, conversations) and convert it to training pairs</p>
+                
+                <div class="input-section">
+                    <label>Source Content Type:</label>
+                    <select id="content-type" class="input-select">
+                        <option value="auto">🔍 Auto-Detect</option>
+                        <option value="cv">👤 CV/Resume</option>
+                        <option value="faq">❓ FAQ</option>
+                        <option value="conversation">💬 Conversation</option>
+                        <option value="email">📧 Email</option>
+                        <option value="json">📋 JSON</option>
+                        <option value="documentation">📄 Documentation</option>
+                    </select>
+                </div>
+
+                <div class="input-section">
+                    <label>Paste Your Content:</label>
+                    <textarea id="raw-content" class="large-textarea" placeholder="Paste your content here...
+
+Example FAQ:
+Q: What is Python?
+A: Python is a high-level programming language...
+
+Q: How do I install Python?
+A: You can download Python from python.org..."></textarea>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="transform-btn">
+                        <i class="fas fa-magic"></i> Auto-Transform
+                    </button>
+                    <button class="btn btn-secondary" id="preview-transform-btn">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+
+                <div id="transform-result" class="result-section" style="display: none;">
+                    <h4>Extracted Training Pairs:</h4>
+                    <div id="extracted-pairs"></div>
+                    <button class="btn btn-success" id="add-transformed-btn">
+                        <i class="fas fa-plus"></i> Add to Dataset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Augment Tab -->
+        <div class="tab-content" id="augment-tab">
+            <div class="tool-card">
+                <h3><i class="fas fa-copy"></i> Data Augmentation</h3>
+                <p>Generate variations of your existing data to increase dataset size</p>
+
+                <div class="augmentation-options">
+                    <div class="option-card">
+                        <i class="fas fa-language"></i>
+                        <h4>Paraphrase Generator</h4>
+                        <p>Create alternative phrasings of prompts</p>
+                        <button class="btn btn-sm btn-primary">Use This</button>
+                    </div>
+                    <div class="option-card">
+                        <i class="fas fa-shuffle"></i>
+                        <h4>Synonym Replacement</h4>
+                        <p>Replace words with synonyms</p>
+                        <button class="btn btn-sm btn-primary">Use This</button>
+                    </div>
+                    <div class="option-card">
+                        <i class="fas fa-text-height"></i>
+                        <h4>Case Variations</h4>
+                        <p>Generate different capitalization styles</p>
+                        <button class="btn btn-sm btn-primary">Use This</button>
+                    </div>
+                    <div class="option-card">
+                        <i class="fas fa-plus-circle"></i>
+                        <h4>Context Expansion</h4>
+                        <p>Add context to prompts</p>
+                        <button class="btn btn-sm btn-primary">Use This</button>
+                    </div>
+                </div>
+
+                <div class="augment-input">
+                    <label>Select prompts to augment:</label>
+                    <div id="prompts-to-augment"></div>
+                    <button class="btn btn-success" id="generate-variations-btn">
+                        <i class="fas fa-cog"></i> Generate Variations
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clean Tab -->
+        <div class="tab-content" id="clean-tab">
+            <div class="tool-card">
+                <h3><i class="fas fa-broom"></i> Data Cleaning & Validation</h3>
+                <p>Automatically detect and fix quality issues in your dataset</p>
+
+                <div class="cleaning-tools">
+                    <div class="tool-option">
+                        <input type="checkbox" id="fix-spelling" checked>
+                        <label for="fix-spelling">
+                            <i class="fas fa-spell-check"></i> Fix Spelling Errors
+                        </label>
+                    </div>
+                    <div class="tool-option">
+                        <input type="checkbox" id="normalize-whitespace" checked>
+                        <label for="normalize-whitespace">
+                            <i class="fas fa-align-left"></i> Normalize Whitespace
+                        </label>
+                    </div>
+                    <div class="tool-option">
+                        <input type="checkbox" id="remove-duplicates" checked>
+                        <label for="remove-duplicates">
+                            <i class="fas fa-clone"></i> Remove Exact Duplicates
+                        </label>
+                    </div>
+                    <div class="tool-option">
+                        <input type="checkbox" id="detect-similar" checked>
+                        <label for="detect-similar">
+                            <i class="fas fa-search"></i> Detect Similar Pairs (>90% match)
+                        </label>
+                    </div>
+                    <div class="tool-option">
+                        <input type="checkbox" id="check-length">
+                        <label for="check-length">
+                            <i class="fas fa-ruler"></i> Flag Short Responses (<20 chars)
+                        </label>
+                    </div>
+                    <div class="tool-option">
+                        <input type="checkbox" id="detect-profanity">
+                        <label for="detect-profanity">
+                            <i class="fas fa-exclamation-triangle"></i> Detect Inappropriate Content
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="run-cleaning-btn">
+                    <i class="fas fa-play"></i> Run Cleaning
+                </button>
+
+                <div id="cleaning-results" class="result-section" style="display: none;">
+                    <h4>Cleaning Results:</h4>
+                    <div id="issues-found"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analyze Tab -->
+        <div class="tab-content" id="analyze-tab">
+            <div class="tool-card">
+                <h3><i class="fas fa-chart-bar"></i> Dataset Analysis</h3>
+                <p>Get insights about your dataset quality and coverage</p>
+
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <h4>Coverage Analysis</h4>
+                        <canvas id="topic-coverage-chart"></canvas>
+                        <p>Topic distribution across your dataset</p>
+                    </div>
+                    <div class="analysis-card">
+                        <h4>Quality Metrics</h4>
+                        <div id="quality-metrics"></div>
+                    </div>
+                    <div class="analysis-card">
+                        <h4>Length Distribution</h4>
+                        <canvas id="length-distribution-chart"></canvas>
+                    </div>
+                    <div class="analysis-card">
+                        <h4>Recommendations</h4>
+                        <div id="recommendations"></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="analyze-btn">
+                    <i class="fas fa-search"></i> Analyze Dataset
+                </button>
+            </div>
+        </div>
+
+        <!-- Dataset View (Always Visible) -->
+        <div class="dataset-section">
+            <div class="section-header">
+                <h2><i class="fas fa-database"></i> Your Dataset (<span id="pair-count">0</span>)</h2>
+                <div class="dataset-actions">
+                    <button class="btn btn-sm btn-secondary" id="manual-add-btn">
+                        <i class="fas fa-plus"></i> Add Manually
+                    </button>
+                    <button class="btn btn-sm btn-success" id="export-dataset-btn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+            <div id="dataset-list" class="dataset-grid"></div>
+        </div>
+    </div>
+
+    <!-- Add remaining modals and scripts -->
+     <script src="js/storage.js"></script>
+     <script src="js/confirmation-modal.js"></script>
+     <script src="js/data-extractor.js"></script>
+    <script src="js/transformers.js"></script>
+    <script src="js/augmenters.js"></script>
+    <script src="js/cleaners.js"></script>
+    <script src="js/analyzers.js"></script>
+    <script src="js/dataset-manager.js"></script>
+    <script src="js/modal-manager.js"></script>
+    <script src="js/import-export.js"></script>
+    <script src="js/ui-manager.js"></script>
+    <script src="js/main.js"></script> <!-- Must be last -->
+</body>
+</html>
