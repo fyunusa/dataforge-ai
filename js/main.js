@@ -32,6 +32,11 @@ class DatasetCreatorApp {
       this.seedSampleData();
     }
 
+    // Initialize file handler
+    if (typeof FileHandler !== "undefined") {
+      window.fileHandler = new FileHandler(DataExtractor);
+    }
+
     // Setup feature event listeners
     this.setupTransformFeature();
     this.setupAugmentFeature();
@@ -322,28 +327,28 @@ class DatasetCreatorApp {
   }
 
   setupAnalyzeFeature() {
-    const analyzeBtn = document.getElementById('analyze-btn');
+    const analyzeBtn = document.getElementById("analyze-btn");
     if (analyzeBtn) {
-        analyzeBtn.addEventListener('click', () => {
-            const dataset = this.datasetManager.getAll();
-            
-            if (dataset.length === 0) {
-                this.uiManager.showNotification('No data to analyze!', 'warning');
-                return;
-            }
-            
-            // Perform comprehensive analysis
-            const analysis = DataAnalyzers.analyzeDataset(dataset);
-            
-            if (analysis) {
-                this.uiManager.displayAnalysisResults(analysis);
-                this.uiManager.showNotification('Analysis complete!', 'success');
-            } else {
-                this.uiManager.showNotification('Error analyzing dataset', 'error');
-            }
-        });
+      analyzeBtn.addEventListener("click", () => {
+        const dataset = this.datasetManager.getAll();
+
+        if (dataset.length === 0) {
+          this.uiManager.showNotification("No data to analyze!", "warning");
+          return;
+        }
+
+        // Perform comprehensive analysis
+        const analysis = DataAnalyzers.analyzeDataset(dataset);
+
+        if (analysis) {
+          this.uiManager.displayAnalysisResults(analysis);
+          this.uiManager.showNotification("Analysis complete!", "success");
+        } else {
+          this.uiManager.showNotification("Error analyzing dataset", "error");
+        }
+      });
     }
-}
+  }
 
   setupManualAdd() {
     const manualAddBtn = document.getElementById("manual-add-btn");
@@ -356,7 +361,13 @@ class DatasetCreatorApp {
 
   setupExport() {
     const exportBtn = document.getElementById("export-dataset-btn");
-    if (exportBtn) {
+    if (exportBtn && this.importExportManager) {
+      exportBtn.addEventListener("click", () => {
+        // Use the ImportExportManager instead of direct export
+        this.importExportManager.openExportModal();
+      });
+    } else if (exportBtn) {
+      // Fallback to direct export if ImportExportManager is not available
       exportBtn.addEventListener("click", () => {
         const dataset = this.datasetManager.getAll();
         if (dataset.length === 0) {

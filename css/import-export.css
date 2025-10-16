@@ -1,0 +1,75 @@
+/* Export Modal Styles */
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #8b5cf6;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --dark: #1e293b;
+    --light: #f8fafc;
+    --border: #e2e8f0;
+    --text: #334155;
+    --text-light: #64748b;
+}
+.export-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.option-group {
+    background: var(--light);
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.format-info {
+    position: relative;
+    min-height: 200px;
+}
+
+.format-details {
+    display: none;
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+.format-details.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+.format-details h4 {
+    color: var(--primary);
+    margin-top: 0;
+}
+
+.code-preview {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1rem;
+    border-radius: 6px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+.checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.checkbox-option:last-child {
+    margin-bottom: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

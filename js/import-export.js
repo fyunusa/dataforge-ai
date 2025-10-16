@@ -2,318 +2,450 @@
  * Handles import and export operations
  */
 class ImportExportManager {
-    constructor(datasetManager) {
-        this.datasetManager = datasetManager;
-        this.setupEventListeners();
+  constructor(datasetManager) {
+    this.datasetManager = datasetManager;
+    this.setupEventListeners();
+  }
+
+  setupEventListeners() {
+    // Only setup listeners for elements that exist
+    const importBtn = document.getElementById("import-btn");
+    const closeImportModal = document.getElementById("close-import-modal");
+    const importCsvBtn = document.getElementById("import-csv-btn");
+    const importJsonBtn = document.getElementById("import-json-btn");
+    const importTextBtn = document.getElementById("import-text-btn");
+    const fileInput = document.getElementById("file-input");
+    const processTextBtn = document.getElementById("process-text-btn");
+    const exportBtn = document.getElementById("export-btn");
+    const clearAllBtn = document.getElementById("clear-all-btn");
+    const exportDatasetBtn = document.getElementById("export-dataset-btn");
+    const closeExportModal = document.getElementById("close-export-modal");
+    const formatSelect = document.getElementById("format-select");
+
+    if (exportDatasetBtn) {
+      exportDatasetBtn.addEventListener("click", () => this.openExportModal());
     }
 
-    setupEventListeners() {
-        // Only setup listeners for elements that exist
-        const importBtn = document.getElementById('import-btn');
-        const closeImportModal = document.getElementById('close-import-modal');
-        const importCsvBtn = document.getElementById('import-csv-btn');
-        const importJsonBtn = document.getElementById('import-json-btn');
-        const importTextBtn = document.getElementById('import-text-btn');
-        const fileInput = document.getElementById('file-input');
-        const processTextBtn = document.getElementById('process-text-btn');
-        const exportBtn = document.getElementById('export-btn');
-        const clearAllBtn = document.getElementById('clear-all-btn');
+    if (closeExportModal) {
+      closeExportModal.addEventListener("click", () => this.closeExportModal());
+    }
 
-        if (importBtn) {
-            importBtn.addEventListener('click', () => this.openImportModal());
-        }
+    if (formatSelect) {
+      formatSelect.addEventListener("change", (e) =>
+        this.updateFormatPreview(e.target.value)
+      );
+    }
 
-        if (closeImportModal) {
-            closeImportModal.addEventListener('click', () => this.closeImportModal());
-        }
+    if (importBtn) {
+      importBtn.addEventListener("click", () => this.openImportModal());
+    }
 
-        if (importCsvBtn) {
-            importCsvBtn.addEventListener('click', () => {
-                if (fileInput) {
-                    fileInput.accept = '.csv';
-                    fileInput.click();
-                }
-            });
-        }
+    if (closeImportModal) {
+      closeImportModal.addEventListener("click", () => this.closeImportModal());
+    }
 
-        if (importJsonBtn) {
-            importJsonBtn.addEventListener('click', () => {
-                if (fileInput) {
-                    fileInput.accept = '.json,.jsonl';
-                    fileInput.click();
-                }
-            });
-        }
-
-        if (importTextBtn) {
-            importTextBtn.addEventListener('click', () => {
-                const textImport = document.getElementById('text-import');
-                if (textImport) {
-                    textImport.style.display = 'block';
-                }
-            });
-        }
-
+    if (importCsvBtn) {
+      importCsvBtn.addEventListener("click", () => {
         if (fileInput) {
-            fileInput.addEventListener('change', (e) => this.handleFileImport(e.target.files[0]));
+          fileInput.accept = ".csv";
+          fileInput.click();
         }
+      });
+    }
 
-        if (processTextBtn) {
-            processTextBtn.addEventListener('click', () => this.processTextImport());
+    if (importJsonBtn) {
+      importJsonBtn.addEventListener("click", () => {
+        if (fileInput) {
+          fileInput.accept = ".json,.jsonl";
+          fileInput.click();
         }
+      });
+    }
 
-        if (exportBtn) {
-            exportBtn.addEventListener('click', () => this.exportDataset());
+    if (importTextBtn) {
+      importTextBtn.addEventListener("click", () => {
+        const textImport = document.getElementById("text-import");
+        if (textImport) {
+          textImport.style.display = "block";
         }
+      });
+    }
 
-        if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', async () => {
-            const confirmed = await window.confirmModal.confirmClear();
-            if (confirmed) {
-                this.datasetManager.clear();
-                if (window.uiManager) {
-                    window.uiManager.showNotification('All data cleared successfully!', 'success');
-                }
-            }
+    if (fileInput) {
+      fileInput.addEventListener("change", (e) =>
+        this.handleFileImport(e.target.files[0])
+      );
+    }
+
+    if (processTextBtn) {
+      processTextBtn.addEventListener("click", () => this.processTextImport());
+    }
+
+    if (exportBtn) {
+      exportBtn.addEventListener("click", () => this.exportDataset());
+    }
+
+    if (clearAllBtn) {
+      clearAllBtn.addEventListener("click", async () => {
+        const confirmed = await window.confirmModal.confirmClear();
+        if (confirmed) {
+          this.datasetManager.clear();
+          if (window.uiManager) {
+            window.uiManager.showNotification(
+              "All data cleared successfully!",
+              "success"
+            );
+          }
+        }
+      });
+    }
+  }
+
+  openImportModal() {
+    const importModal = document.getElementById("import-modal");
+    const textImport = document.getElementById("text-import");
+
+    if (importModal) importModal.classList.add("active");
+    if (textImport) textImport.style.display = "none";
+  }
+
+  closeImportModal() {
+    const importModal = document.getElementById("import-modal");
+    if (importModal) importModal.classList.remove("active");
+  }
+
+  handleFileImport(file) {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target.result;
+
+      if (file.name.endsWith(".csv")) {
+        this.importCSV(content);
+      } else if (file.name.endsWith(".json") || file.name.endsWith(".jsonl")) {
+        this.importJSON(content);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  openExportModal() {
+    const exportModal = document.getElementById("export-modal");
+    if (exportModal) {
+      exportModal.classList.add("active");
+      // Show initial format preview
+      this.updateFormatPreview(document.getElementById("format-select").value);
+    }
+  }
+
+  closeExportModal() {
+    const exportModal = document.getElementById("export-modal");
+    if (exportModal) exportModal.classList.remove("active");
+  }
+
+  updateFormatPreview(format) {
+    // Hide all format details first
+    document.querySelectorAll(".format-details").forEach((el) => {
+      el.classList.remove("active");
+    });
+
+    // Show the selected format details
+    const formatInfo = document.getElementById(`${format}-info`);
+    if (formatInfo) formatInfo.classList.add("active");
+  }
+
+  importCSV(content) {
+    const lines = content.split("\n").filter((line) => line.trim());
+    const headers = lines[0].split(",").map((h) => h.trim().replace(/"/g, ""));
+
+    const promptIndex = headers.findIndex(
+      (h) =>
+        h.toLowerCase().includes("prompt") || h.toLowerCase().includes("input")
+    );
+    const completionIndex = headers.findIndex(
+      (h) =>
+        h.toLowerCase().includes("completion") ||
+        h.toLowerCase().includes("output") ||
+        h.toLowerCase().includes("response")
+    );
+
+    if (promptIndex === -1 || completionIndex === -1) {
+      if (window.uiManager) {
+        window.uiManager.showNotification(
+          "CSV must have prompt/input and completion/output/response columns",
+          "error"
+        );
+      } else {
+        alert(
+          "CSV must have prompt/input and completion/output/response columns"
+        );
+      }
+      return;
+    }
+
+    let imported = 0;
+    for (let i = 1; i < lines.length; i++) {
+      const values = this.parseCSVLine(lines[i]);
+      if (values.length > Math.max(promptIndex, completionIndex)) {
+        this.datasetManager.add({
+          prompt: values[promptIndex],
+          completion: values[completionIndex],
+          tags: [],
         });
-    }
-    }
-
-    openImportModal() {
-        const importModal = document.getElementById('import-modal');
-        const textImport = document.getElementById('text-import');
-        
-        if (importModal) importModal.classList.add('active');
-        if (textImport) textImport.style.display = 'none';
+        imported++;
+      }
     }
 
-    closeImportModal() {
-        const importModal = document.getElementById('import-modal');
-        if (importModal) importModal.classList.remove('active');
+    if (window.uiManager) {
+      window.uiManager.showNotification(
+        `Imported ${imported} pairs from CSV!`,
+        "success"
+      );
     }
+    this.closeImportModal();
+  }
 
-    handleFileImport(file) {
-        if (!file) return;
+  parseCSVLine(line) {
+    const result = [];
+    let current = "";
+    let inQuotes = false;
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const content = e.target.result;
-            
-            if (file.name.endsWith('.csv')) {
-                this.importCSV(content);
-            } else if (file.name.endsWith('.json') || file.name.endsWith('.jsonl')) {
-                this.importJSON(content);
-            }
-        };
-        reader.readAsText(file);
-    }
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
 
-    importCSV(content) {
-        const lines = content.split('\n').filter(line => line.trim());
-        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-        
-        const promptIndex = headers.findIndex(h => h.toLowerCase().includes('prompt') || h.toLowerCase().includes('input'));
-        const completionIndex = headers.findIndex(h => h.toLowerCase().includes('completion') || h.toLowerCase().includes('output') || h.toLowerCase().includes('response'));
-
-        if (promptIndex === -1 || completionIndex === -1) {
-            if (window.uiManager) {
-                window.uiManager.showNotification('CSV must have prompt/input and completion/output/response columns', 'error');
-            } else {
-                alert('CSV must have prompt/input and completion/output/response columns');
-            }
-            return;
-        }
-
-        let imported = 0;
-        for (let i = 1; i < lines.length; i++) {
-            const values = this.parseCSVLine(lines[i]);
-            if (values.length > Math.max(promptIndex, completionIndex)) {
-                this.datasetManager.add({
-                    prompt: values[promptIndex],
-                    completion: values[completionIndex],
-                    tags: []
-                });
-                imported++;
-            }
-        }
-
-        if (window.uiManager) {
-            window.uiManager.showNotification(`Imported ${imported} pairs from CSV!`, 'success');
-        }
-        this.closeImportModal();
-    }
-
-    parseCSVLine(line) {
-        const result = [];
-        let current = '';
-        let inQuotes = false;
-
-        for (let i = 0; i < line.length; i++) {
-            const char = line[i];
-            
-            if (char === '"') {
-                inQuotes = !inQuotes;
-            } else if (char === ',' && !inQuotes) {
-                result.push(current.trim());
-                current = '';
-            } else {
-                current += char;
-            }
-        }
-        
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === "," && !inQuotes) {
         result.push(current.trim());
-        return result;
+        current = "";
+      } else {
+        current += char;
+      }
     }
 
-    importJSON(content) {
-        try {
-            let data;
-            
-            if (content.trim().startsWith('[')) {
-                data = JSON.parse(content);
-            } else {
-                data = content.split('\n').filter(line => line.trim()).map(line => JSON.parse(line));
-            }
+    result.push(current.trim());
+    return result;
+  }
 
-            let imported = 0;
-            data.forEach(item => {
-                if (item.prompt && item.completion) {
-                    this.datasetManager.add({
-                        prompt: item.prompt,
-                        completion: item.completion,
-                        tags: item.tags || []
-                    });
-                    imported++;
-                }
-            });
+  importJSON(content) {
+    try {
+      let data;
 
-            if (window.uiManager) {
-                window.uiManager.showNotification(`Imported ${imported} pairs from JSON!`, 'success');
-            }
-            this.closeImportModal();
-        } catch (e) {
-            if (window.uiManager) {
-                window.uiManager.showNotification('Error parsing JSON: ' + e.message, 'error');
-            } else {
-                alert('Error parsing JSON: ' + e.message);
-            }
+      if (content.trim().startsWith("[")) {
+        data = JSON.parse(content);
+      } else {
+        data = content
+          .split("\n")
+          .filter((line) => line.trim())
+          .map((line) => JSON.parse(line));
+      }
+
+      let imported = 0;
+      data.forEach((item) => {
+        if (item.prompt && item.completion) {
+          this.datasetManager.add({
+            prompt: item.prompt,
+            completion: item.completion,
+            tags: item.tags || [],
+          });
+          imported++;
         }
+      });
+
+      if (window.uiManager) {
+        window.uiManager.showNotification(
+          `Imported ${imported} pairs from JSON!`,
+          "success"
+        );
+      }
+      this.closeImportModal();
+    } catch (e) {
+      if (window.uiManager) {
+        window.uiManager.showNotification(
+          "Error parsing JSON: " + e.message,
+          "error"
+        );
+      } else {
+        alert("Error parsing JSON: " + e.message);
+      }
     }
+  }
 
-    processTextImport() {
-        const pasteArea = document.getElementById('paste-area');
-        if (!pasteArea) return;
-        
-        const text = pasteArea.value.trim();
-        if (!text) return;
+  processTextImport() {
+    const pasteArea = document.getElementById("paste-area");
+    if (!pasteArea) return;
 
-        const blocks = text.split('\n\n').filter(b => b.trim());
-        
-        let imported = 0;
-        blocks.forEach(block => {
-            const lines = block.split('\n').filter(l => l.trim());
-            if (lines.length >= 2) {
-                this.datasetManager.add({
-                    prompt: lines[0],
-                    completion: lines.slice(1).join(' '),
-                    tags: []
-                });
-                imported++;
-            }
+    const text = pasteArea.value.trim();
+    if (!text) return;
+
+    const blocks = text.split("\n\n").filter((b) => b.trim());
+
+    let imported = 0;
+    blocks.forEach((block) => {
+      const lines = block.split("\n").filter((l) => l.trim());
+      if (lines.length >= 2) {
+        this.datasetManager.add({
+          prompt: lines[0],
+          completion: lines.slice(1).join(" "),
+          tags: [],
         });
+        imported++;
+      }
+    });
 
-        if (window.uiManager) {
-            window.uiManager.showNotification(`Imported ${imported} pairs from text!`, 'success');
-        }
-        this.closeImportModal();
+    if (window.uiManager) {
+      window.uiManager.showNotification(
+        `Imported ${imported} pairs from text!`,
+        "success"
+      );
+    }
+    this.closeImportModal();
+  }
+
+  // Replace the existing exportDataset method with this enhanced version:
+  exportDataset() {
+    const dataset = this.datasetManager.getAll();
+
+    if (dataset.length === 0) {
+      if (window.uiManager) {
+        window.uiManager.showNotification("No data to export!", "warning");
+      }
+      return;
     }
 
-    exportDataset() {
-        const dataset = this.datasetManager.getAll();
-        
-        if (dataset.length === 0) {
-            if (window.uiManager) {
-                window.uiManager.showNotification('No data to export!', 'warning');
-            } else {
-                alert('No data to export!');
+    const formatSelect = document.getElementById("format-select");
+    const format = formatSelect ? formatSelect.value : "json";
+
+    const removeDuplicatesCheck = document.getElementById("remove-duplicates");
+    const validateDataCheck = document.getElementById("validate-data");
+    const includeTagsCheck = document.getElementById("include-tags");
+
+    const removeDuplicates = removeDuplicatesCheck
+      ? removeDuplicatesCheck.checked
+      : false;
+    const validate = validateDataCheck ? validateDataCheck.checked : true;
+    const includeTags = includeTagsCheck ? includeTagsCheck.checked : false;
+
+    let data = [...dataset];
+
+    if (removeDuplicates) {
+      const seen = new Set();
+      data = data.filter((pair) => {
+        const key = `${pair.prompt}|${pair.completion}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    if (validate) {
+      data = data.filter((pair) => pair.prompt && pair.completion);
+    }
+
+    let content, filename, mimeType;
+
+    switch (format) {
+      case "jsonl":
+        content = data
+          .map((pair) => {
+            const obj = { prompt: pair.prompt, completion: pair.completion };
+            if (includeTags && pair.tags && pair.tags.length > 0) {
+              obj.tags = pair.tags;
             }
-            return;
-        }
+            return JSON.stringify(obj);
+          })
+          .join("\n");
+        filename = "dataset.jsonl";
+        mimeType = "application/jsonl";
+        break;
 
-        // Default to JSON format since format-select might not exist
-        const formatSelect = document.getElementById('format-select');
-        const format = formatSelect ? formatSelect.value : 'json';
-        
-        const removeDuplicatesCheck = document.getElementById('remove-duplicates');
-        const validateDataCheck = document.getElementById('validate-data');
-        
-        const removeDuplicates = removeDuplicatesCheck ? removeDuplicatesCheck.checked : false;
-        const validate = validateDataCheck ? validateDataCheck.checked : true;
+      case "csv":
+        content = "prompt,completion" + (includeTags ? ",tags" : "") + "\n";
+        content += data
+          .map((pair) => {
+            let row = `"${pair.prompt.replace(
+              /"/g,
+              '""'
+            )}","${pair.completion.replace(/"/g, '""')}"`;
+            if (includeTags && pair.tags) {
+              row += `,"${pair.tags.join(", ").replace(/"/g, '""')}"`;
+            }
+            return row;
+          })
+          .join("\n");
+        filename = "dataset.csv";
+        mimeType = "text/csv";
+        break;
 
-        let data = [...dataset];
+      case "txt":
+        content = data
+          .map((pair) => {
+            let text = `Question: ${pair.prompt}\nAnswer: ${pair.completion}`;
+            if (includeTags && pair.tags && pair.tags.length > 0) {
+              text += `\nTags: ${pair.tags.join(", ")}`;
+            }
+            return text;
+          })
+          .join("\n\n");
+        filename = "dataset.txt";
+        mimeType = "text/plain";
+        break;
 
-        if (removeDuplicates) {
-            const seen = new Set();
-            data = data.filter(pair => {
-                const key = `${pair.prompt}|${pair.completion}`;
-                if (seen.has(key)) return false;
-                seen.add(key);
-                return true;
-            });
-        }
+      case "hf":
+        const hfData = {
+          train: data.map((pair) => {
+            const obj = { input: pair.prompt, output: pair.completion };
+            if (includeTags && pair.tags && pair.tags.length > 0) {
+              obj.tags = pair.tags;
+            }
+            return obj;
+          }),
+        };
+        content = JSON.stringify(hfData, null, 2);
+        filename = "huggingface-dataset.json";
+        mimeType = "application/json";
+        break;
 
-        if (validate) {
-            data = data.filter(pair => pair.prompt && pair.completion);
-        }
-
-        let content, filename, mimeType;
-
-        switch(format) {
-            case 'jsonl':
-                content = data.map(pair => 
-                    JSON.stringify({ prompt: pair.prompt, completion: pair.completion })
-                ).join('\n');
-                filename = 'dataset.jsonl';
-                mimeType = 'application/jsonl';
-                break;
-                
-            case 'csv':
-                content = 'prompt,completion\n';
-                content += data.map(pair => 
-                    `"${pair.prompt.replace(/"/g, '""')}","${pair.completion.replace(/"/g, '""')}"`
-                ).join('\n');
-                filename = 'dataset.csv';
-                mimeType = 'text/csv';
-                break;
-                
-            case 'json':
-            default:
-                content = JSON.stringify(data.map(pair => ({
-                    prompt: pair.prompt,
-                    completion: pair.completion,
-                    tags: pair.tags || []
-                })), null, 2);
-                filename = `dataset-${Date.now()}.json`;
-                mimeType = 'application/json';
-                break;
-        }
-
-        this.downloadFile(content, filename, mimeType);
-        
-        if (window.uiManager) {
-            window.uiManager.showNotification(`Exported ${data.length} pairs successfully!`, 'success');
-        }
+      case "json":
+      default:
+        content = JSON.stringify(
+          data.map((pair) => {
+            const obj = { prompt: pair.prompt, completion: pair.completion };
+            if (includeTags && pair.tags && pair.tags.length > 0) {
+              obj.tags = pair.tags;
+            }
+            return obj;
+          }),
+          null,
+          2
+        );
+        filename = `dataset-${Date.now()}.json`;
+        mimeType = "application/json";
+        break;
     }
 
-    downloadFile(content, filename, mimeType) {
-        const blob = new Blob([content], { type: mimeType });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    this.downloadFile(content, filename, mimeType);
+
+    if (window.uiManager) {
+      window.uiManager.showNotification(
+        `Exported ${data.length} pairs as ${format.toUpperCase()}!`,
+        "success"
+      );
     }
+
+    this.closeExportModal();
+  }
+
+  downloadFile(content, filename, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 }
