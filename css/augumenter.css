@@ -1,0 +1,111 @@
+/* Add to your existing CSS file */
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #8b5cf6;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --dark: #1e293b;
+    --light: #f8fafc;
+    --border: #e2e8f0;
+    --text: #334155;
+    --text-light: #64748b;
+}
+/* Augmentation Styles */
+.augmentation-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.option-card {
+  background: var(--light);
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.option-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.option-card i {
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.option-card h4 {
+  margin: 0.5rem 0;
+  color: var(--dark);
+}
+
+.option-card p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 1rem;
+}
+
+.option-card .btn {
+  min-width: 100px;
+}
+
+.option-card .btn.selected {
+  background-color: var(--success);
+}
+
+.augment-input {
+  background: var(--light);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+
+.augment-input label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  color: var(--dark);
+}
+
+#prompts-to-augment {
+  max-height: 300px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.prompt-checkbox {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.prompt-checkbox:last-child {
+  border-bottom: none;
+}
+
+.prompt-checkbox input[type="checkbox"] {
+  margin-right: 0.75rem;
+}
+
+.prompt-checkbox label {
+  margin: 0;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-light);
+  padding: 2rem 0;
+}
